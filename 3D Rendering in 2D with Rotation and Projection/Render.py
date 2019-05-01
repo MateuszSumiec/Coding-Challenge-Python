@@ -5,7 +5,7 @@ Created on Wed May  1 10:13:40 2019
 @author: Mateusz
 """
 
-from common import cube, darkBlue, white, width, height
+from common import cube, cube_edges, darkBlue, white, width, height
 import numpy as np
 import pygame as pg
 import sys
@@ -19,6 +19,7 @@ class Render():
         self.screen.fill(darkBlue)
 
         self.vertices = cube * 50
+        self.edges = cube_edges
 
         self.thetaX = 0
         self.thetaY = 0
@@ -96,10 +97,19 @@ class Render():
 
             # To clear the window in each loop
             self.screen.fill(darkBlue)
-
+            projected = []
             for vertex in self.vertices:
-                x, y = self.projectZ(self.translate(self.rotateY(self.rotateX(vertex.T))))
-                self.screen.fill(white, (x, y, 8, 8))
+                rotated = self.rotateY(self.rotateX(vertex.T))
+                x, y = self.projectZ(self.translate(rotated))
+                projected.append([x, y])
+                self.screen.fill(white, (x, y, 1, 1))
+
+            for edge in self.edges:
+                pg.draw.line(self.screen,
+                             white,
+                             (projected[edge[0]][0], projected[edge[0]][1]),
+                             (projected[edge[1]][0], projected[edge[1]][1])
+                             )
 
             self.increment_theta()
             pg.display.flip()
