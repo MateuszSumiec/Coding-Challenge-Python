@@ -18,24 +18,21 @@ class Render():
         self.screen = pg.display.set_mode((width, height))
         self.screen.fill(darkBlue)
 
-        self.vertices = self.translate(cube * 50)
+        self.vertices = cube * 50
 
         self.thetaX = 0
         self.thetaY = 0
         self.thetaZ = 0
 
-    def translate(self, figure, translateX=width / 2, translateY=height / 2):
-        for vertex in figure:
-            vertex[0] += translateX
-            vertex[1] += translateY
-        return figure
+    def translate(self, vertex, translateX=width / 2, translateY=height / 2):
+        return vertex + np.array([translateX, translateY, 0])
 
     def create_rotation_matrix_X(self, theta=0.0):
         return np.array([
                 [1, 0, 0],
                 [0, np.cos(theta), -np.sin(theta)],
                 [0, np.sin(theta), np.cos(theta)]
-                ]) - np.array([[-height/2, 0, 0]], [0, 0, 0], [0, 0, 0])
+                ])
 
     def rotateX(self, vertex):
         """
@@ -101,7 +98,7 @@ class Render():
             self.screen.fill(darkBlue)
 
             for vertex in self.vertices:
-                x, y = self.projectZ(self.rotateX(vertex.T))
+                x, y = self.projectZ(self.translate(self.rotateX(vertex.T)))
                 self.screen.fill(white, (x, y, 8, 8))
 
             self.increment_theta()
