@@ -5,14 +5,14 @@ Created on Wed May  1 10:13:40 2019
 @author: Mateusz
 """
 
-from common import square, cube, darkBlue, white, width, height
+from common import cube, darkBlue, white, width, height
 import numpy as np
 import pygame as pg
 import sys
 
 
 class Render():
-    def __init__(self, width=800, height=600):
+    def __init__(self, width=width, height=height):
         """Create a window with given resolution"""
         pg.init()
         self.screen = pg.display.set_mode((width, height))
@@ -75,11 +75,16 @@ class Render():
         return np.matmul(vertex, self.create_rotation_matrix_Z(self.thetaZ).T)
 
     def orthogonal_projection_matrix(self):
-        self.projectionZ = np.array([[1, 0, 0],
+        self.projection = np.array([[1, 0, 0],
                                     [0, 1, 0]])
 
     def perspective_projection_matrix(self):
         pass
+
+    def increment_theta(self, incX=0.001, incY=0.001, incZ=0.001):
+        self.thetaX += incX
+        self.thetaY += incY
+        self.thetaZ += incZ
 
     def draw(self):
         while True:
@@ -94,8 +99,5 @@ class Render():
                 x, y, z = self.rotateY(vertex)
                 self.screen.fill(white, (x, y, 8, 8))
 
-            self.thetaX += 0.001
-            self.thetaY += 0.001
-            self.thetaZ += 0.001
-
+            self.increment_theta()
             pg.display.flip()
