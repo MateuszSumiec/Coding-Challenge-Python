@@ -18,26 +18,24 @@ class Render():
         self.screen = pg.display.set_mode((width, height))
         self.screen.fill(darkBlue)
 
-        self.vertices = cube * 100
+        self.vertices = self.translate(cube * 50)
 
         self.thetaX = 0
         self.thetaY = 0
         self.thetaZ = 0
 
-    def scale(self, figure, factor):
-        figure * factor
-
-    def translate(self, figure, translate=[width / 2, height / 2]):
+    def translate(self, figure, translateX=width / 2, translateY=height / 2):
         for vertex in figure:
-            vertex[0] += translate[0]
-            vertex[1] += translate[1]
+            vertex[0] += translateX
+            vertex[1] += translateY
+        return figure
 
     def create_rotation_matrix_X(self, theta=0.0):
         return np.array([
                 [1, 0, 0],
                 [0, np.cos(theta), -np.sin(theta)],
                 [0, np.sin(theta), np.cos(theta)]
-                ])
+                ]) - np.array([[-height/2, 0, 0]], [0, 0, 0], [0, 0, 0])
 
     def rotateX(self, vertex):
         """
@@ -75,13 +73,19 @@ class Render():
         return np.matmul(vertex, self.create_rotation_matrix_Z(self.thetaZ).T)
 
     def orthogonal_projection_matrix(self):
-        self.projection = np.array([[1, 0, 0],
-                                    [0, 1, 0]])
+        return np.array([
+                [1, 0, 0],
+                [0, 1, 0]
+                ])
+
+    def projectZ(self, vertex):
+        return np.matmul(self.orthogonal_projection_matrix(), vertex)
 
     def perspective_projection_matrix(self):
         pass
 
     def increment_theta(self, incX=0.001, incY=0.001, incZ=0.001):
+        """Theta is from greek, a mark for angle"""
         self.thetaX += incX
         self.thetaY += incY
         self.thetaZ += incZ
@@ -93,10 +97,11 @@ class Render():
                     pg.quit()
                     sys.exit()
 
+            # To clear the window in each loop
             self.screen.fill(darkBlue)
 
             for vertex in self.vertices:
-                x, y, z = self.rotateY(vertex)
+                x, y = self.projectZ(self.rotateX(vertex.T))
                 self.screen.fill(white, (x, y, 8, 8))
 
             self.increment_theta()
