@@ -98,7 +98,7 @@ class Render():
             self.screen.fill(darkBlue)
 
             for vertex in self.vertices:
-                x, y = self.projectZ(self.translate(self.rotateX(vertex.T)))
+                x, y = self.projectZ(self.translate(self.rotateY(self.rotateX(vertex.T))))
                 self.screen.fill(white, (x, y, 8, 8))
 
             self.increment_theta()
