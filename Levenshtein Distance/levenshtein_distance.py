@@ -12,13 +12,11 @@ import numpy as np
 def set_first_row_with_incrementing_integers(table: np.array) -> None:
     for i in range(1, table.shape[0]):
         table[i, 0] = i
-    return None
 
 
 def set_first_column_with_incrementing_integers(table: np.array) -> None:
     for i in range(1, table.shape[1]):
         table[0, i] = i
-    return None
 
 
 def cost_function(first_char: str, second_char: str) -> bool:
@@ -32,7 +30,6 @@ def create_distance_table(table: np.array, first_string: str, second_string: str
                               table[i, j-1] + 1,
                               table[i-1, j-1] + cost_function(first_string[i-1], 
                                                               second_string[j-1]))
-    return None
 
 
 def leven_distance(first_string: str, second_string: str) -> int:
